@@ -23,9 +23,9 @@ public class SqlUtils2Test {
     @Test
     public void select(){
         /**不带条件的查询*/
-        String sql = "select  zzdrsl,zzdrsj,sfhc,hcdw from jkxxgl where convert(varchar(10),zzdrsj,23) like '2018-07-23%'";
+        String sql = "select  zzdrsl,zzdrsj,sfhc,hcdw from jkxxgl where year(zzdrsj) = '2018'";
         System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-        for(int i=0;i<100;i++){
+        for(int i=0;i<1;i++){
             System.out.println(sqlUtils2.select(sql));
         }
         System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
