@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import javax.sql.DataSource;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public class SqlUtils2 {
     private  static final  SqlUtils2 sqlUtils = new SqlUtils2();
 
     /**数据库连接*/
-    private static DataSource dataSource;
+    private static HikariDataSource dataSource;
 
     /**获取属性的值 key-value*/
     private static Properties properties = new Properties();

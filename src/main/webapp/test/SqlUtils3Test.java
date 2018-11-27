@@ -1,23 +1,17 @@
 import com.alibaba.fastjson.JSONArray;
-import com.jdbc.utils.SqlUtils;
-import com.jdbc.utils.SqlUtils2;
+import com.jdbc.utils.SqlUtils3;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-
 
 /**
  * @author CourageAQ
- * @date 2018/11/12 18:28
- *
+ * @date 2018/11/27 10:25
  */
+public class SqlUtils3Test {
 
-
-public class SqlUtils2Test {
-
-    SqlUtils2 sqlUtils2 = SqlUtils2.getInstance();
+    SqlUtils3 sqlUtils3 = SqlUtils3.getInstance();
 
 
     @Test
@@ -26,11 +20,12 @@ public class SqlUtils2Test {
         String sql = "select  top 1 *  from jkxxgl";
         System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         for(int i=0;i<100000;i++){
-            System.out.println(sqlUtils2.select(sql));
+            System.out.println(sqlUtils3.search(sql));
         }
         System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-/*        JSONArray result1 = sqlUtils2.select("select  zzdrsl,zzdrsj,sfhc,hcdw from jkxxgl where convert(varchar(10),zzdrsj,23) like '2018%'");
+/*        JSONArray result1 = sqlUtils3.search("select  zzdrsl,zzdrsj,sfhc,hcdw from jkxxgl where convert(varchar(10),zzdrsj,23) like '2018%'");
         System.out.println("*********" + result1);*/
 
     }
+
 }
