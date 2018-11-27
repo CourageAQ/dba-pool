@@ -8,9 +8,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.InputStream;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
+import java.math.BigDecimal;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -61,8 +60,8 @@ public class SqlUtils3 {
             dataSource.setMaxPoolPreparedStatementPerConnectionSize(Integer.valueOf(properties.getProperty("spring.datasource.maxPoolPreparedStatementPerConnectionSize")));
             dataSource.setValidationQuery(properties.getProperty("spring.datasource.validationQuery"));
         }catch (Exception e){
+            log.error("读取配置文件失败，无法初始化DruidDataSource" + e.getMessage());
             e.printStackTrace();
-            log.error("初始化dataSource失败！" + e.getMessage());
         }
     }
 
@@ -108,6 +107,33 @@ public class SqlUtils3 {
         try{
             connection = getConnection();
             ps = connection.prepareStatement(sql);
+            if(params!=null){
+                Object param=null;
+                for(int i=0;i<params.size();i++){
+                    param=params.get(i);
+                    if (param instanceof Integer) {
+                        ps.setInt(i + 1, ((Integer) param).intValue());
+                    } else if (param instanceof String) {
+                        ps.setString(i + 1, (String) param);
+                    } else if (param instanceof Double) {
+                        ps.setDouble(i + 1, ((Double) param).doubleValue());
+                    } else if (param instanceof Float) {
+                        ps.setFloat(i + 1, ((Float) param).floatValue());
+                    } else if (param instanceof Long) {
+                        ps.setLong(i + 1,((Long) param).longValue());
+                    } else if (param instanceof Boolean) {
+                        ps.setBoolean(i + 1, ((Boolean) param).booleanValue());
+                    } else if (param instanceof Date) {
+                        ps.setDate(i + 1, (Date) param);
+                    } else if (param instanceof BigDecimal) {
+                        ps.setBigDecimal(i + 1, (BigDecimal) param);
+                    } else if (param instanceof Timestamp) {
+                        ps.setTimestamp(i + 1, (Timestamp) param);
+                    } else if (param == null){
+                        ps.setObject(i + 1, param);
+                    }
+                }
+            }
             resultSet = ps.executeQuery();
             ResultSetMetaData md = resultSet.getMetaData();
             List<String> columns = new ArrayList<String>();
@@ -140,6 +166,7 @@ public class SqlUtils3 {
             if (resultSet != null) resultSet.close();
         }catch (Exception e){
             log.error("关闭连接失败！" + e.getMessage());
+            e.printStackTrace();
         }
     }
 }
