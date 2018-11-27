@@ -89,7 +89,7 @@ public class SqlUtils2 {
         return  select(null,sql,null);
     }
 
-    public  JSONArray select(String dbType, String sql, List<Object> params){
+    public synchronized   JSONArray select(String dbType, String sql, List<Object> params){
         PreparedStatement ps = null;
         ResultSet resultSet = null;
         Connection conn = null;

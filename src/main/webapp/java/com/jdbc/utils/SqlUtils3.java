@@ -76,7 +76,7 @@ public class SqlUtils3 {
      * Druid 连接
      * @return
      */
-    public DruidPooledConnection getConnection() throws  Exception{
+    public  DruidPooledConnection getConnection() throws  Exception{
         if (null == dataSource){
             initDataSource();
             return  dataSource.getConnection();
@@ -102,7 +102,7 @@ public class SqlUtils3 {
         return search(null,sql,params);
     }
 
-    public  JSONArray search(String dbType, String sql, List params){
+    public synchronized   JSONArray search(String dbType, String sql, List params){
         JSONArray result=new JSONArray();
         JSONObject jsonObject;
         try{
@@ -142,5 +142,4 @@ public class SqlUtils3 {
             log.error("关闭连接失败！" + e.getMessage());
         }
     }
-
 }

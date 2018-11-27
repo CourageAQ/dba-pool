@@ -23,14 +23,11 @@ public class SqlUtils2Test {
     @Test
     public void select(){
         /**不带条件的查询*/
-        String sql = "select  top 1 *  from jkxxgl";
+        String sql = "select  zzdrsl,zzdrsj,sfhc,hcdw from jkxxgl where convert(varchar(10),zzdrsj,23) like '2018-07-23%'";
         System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-        for(int i=0;i<100000;i++){
+        for(int i=0;i<100;i++){
             System.out.println(sqlUtils2.select(sql));
         }
         System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
-/*        JSONArray result1 = sqlUtils2.select("select  zzdrsl,zzdrsj,sfhc,hcdw from jkxxgl where convert(varchar(10),zzdrsj,23) like '2018%'");
-        System.out.println("*********" + result1);*/
-
     }
 }
