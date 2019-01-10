@@ -15,14 +15,14 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * 阿里巴巴 druid 数据库连接池
+ * 阿里巴巴 druid 数据库连接池 多数据源
  * @author CourageAQ
  * @date 2018/11/27 9:17
  */
-public class SqlUtils3 {
+public class SqlUtils4 {
 
-    private static SqlUtils3 sqlUtils3 = new SqlUtils3();
-    private static Log log = LogFactory.getLog(SqlUtils3.class);
+    private static SqlUtils4 sqlUtils3 = new SqlUtils4();
+    private static Log log = LogFactory.getLog(SqlUtils4.class);
     private static DruidDataSource dataSource = null;
     private static DruidPooledConnection connection = null;
     private static PreparedStatement  ps = null;
@@ -31,7 +31,7 @@ public class SqlUtils3 {
     /**获取属性的值 key-value*/
     private static Properties properties = new Properties();
     /**读取数据库配置文件*/
-    private static InputStream in = SqlUtils3.class.getResourceAsStream("/druid.properties");
+    private static InputStream in = SqlUtils4.class.getResourceAsStream("/druid.properties");
 
     /**初始化静态代码块，
      * 之后执行initDataSource静态方法，
@@ -65,10 +65,38 @@ public class SqlUtils3 {
         }
     }
 
-    /**无参构造函数*/
-    public SqlUtils3() {}
+    /**其他数据源*/
+    private DruidDataSource  getDruidDataSource(String dbType){
+        DruidDataSource dataSourceDruid = new DruidDataSource();
+        try{
+            properties.load(in);
+            dataSourceDruid.setUrl(properties.getProperty("spring."+dbType +".url"));
+            dataSourceDruid.setUsername(properties.getProperty("spring."+dbType+".username"));
+            dataSourceDruid.setPassword(properties.getProperty("spring."+dbType+".password"));
+            dataSourceDruid.setDriverClassName(properties.getProperty("spring."+dbType+".driverClassName"));
+            dataSourceDruid.setInitialSize(Integer.valueOf(properties.getProperty("spring."+dbType+".initialSize")));
+            dataSourceDruid.setMinIdle(Integer.valueOf(properties.getProperty("spring."+dbType+".minIdle")));
+            dataSourceDruid.setMaxActive(Integer.valueOf(properties.getProperty("spring."+dbType+".maxActive")));
+            dataSourceDruid.setMaxWait(Long.valueOf(properties.getProperty("spring."+dbType+".maxWait")));
+            dataSourceDruid.setTimeBetweenEvictionRunsMillis(Long.valueOf(properties.getProperty("spring."+dbType+".timeBetweenEvictionRunsMillis")));
+            dataSourceDruid.setMinEvictableIdleTimeMillis(Long.valueOf(properties.getProperty("spring."+dbType+".minEvictableIdleTimeMillis")));
+            dataSourceDruid.setPoolPreparedStatements(Boolean.valueOf(properties.getProperty("spring."+dbType+".poolPreparedStatements")));
+            dataSourceDruid.setMaxPoolPreparedStatementPerConnectionSize(Integer.valueOf(properties.getProperty("spring."+dbType+".maxPoolPreparedStatementPerConnectionSize")));
+            dataSourceDruid.setValidationQuery(properties.getProperty("spring."+dbType+".validationQuery"));
+        }catch (Exception e){
+            log.error("读取配置文件失败，无法初始化DruidDataSource" + e.getMessage());
+            e.printStackTrace();
+        }
+        return  dataSourceDruid;
+    }
 
-    public  static  SqlUtils3 getInstance(){
+
+
+
+    /**无参构造函数*/
+    public SqlUtils4() {}
+
+    public  static SqlUtils4 getInstance(){
         return  sqlUtils3;
     }
     /**
@@ -82,6 +110,11 @@ public class SqlUtils3 {
         }else{
             return  dataSource.getConnection();
         }
+    }
+
+
+    public  DruidPooledConnection getConnection2(String dbType) throws  Exception{
+        return  getDruidDataSource(dbType).getConnection();
     }
 
     /**
@@ -105,7 +138,11 @@ public class SqlUtils3 {
         JSONArray result=new JSONArray();
         JSONObject jsonObject;
         try{
-            connection = getConnection();
+            if(null == dbType){
+                connection = getConnection();
+            }else{
+                connection = getConnection2(dbType);
+            }
             ps = connection.prepareStatement(sql);
             if(params!=null){
                 Object param=null;
@@ -148,9 +185,11 @@ public class SqlUtils3 {
                 }
                 result.add(jsonObject);
             }
-            closeAll();
+
         }catch (Exception e){
             e.printStackTrace();
+        }finally {
+            closeAll();
         }
         return  result;
 
